@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klasifikasi Tumor Payudara - Decision Tree (TA-05)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .header-banner { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border-radius: 12px 12px 0 0; padding: 24px; }
+        .btn-predict { background-color: #2a5298; border: none; font-weight: 600; padding: 12px; }
+        .btn-predict:hover { background-color: #1e3c72; }
+    </style>
+</head>
+<body>
+<div class="container my-5" style="max-width: 850px;">
+    <div class="card">
+        <div class="header-banner text-center">
+            <h3 class="mb-1">Sistem Klasifikasi Tumor Payudara</h3>
+            <p class="mb-0 opacity-75">Implementasi Algoritma Decision Tree (White-Box Model) - Praktikum Pembelajaran Mesin</p>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST">
+                <div class="row g-3">
+                    {% for key, label, default, step in feature_labels %}
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-secondary">{{ label }}</label>
+                        <input type="number" step="{{ step }}" name="{{ key }}" class="form-control"
+                               value="{{ input_values.get(key, default) }}" required>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="fillMalignantSample()">Isi Contoh Sampel Ganas</button>
+                    <button type="button" class="btn btn-outline-success" onclick="fillBenignSample()">Isi Contoh Sampel Jinak</button>
+                    <button type="submit" class="btn btn-primary btn-predict px-4">Prediksi Klasifikasi</button>
+                </div>
+            </form>
+
+            {% if prediction %}
+            <hr class="my-4">
+            <div class="alert {% if 'GANAS' in prediction %}alert-danger{% else %}alert-success{% endif %} p-4 rounded-3">
+                <h4 class="alert-heading fw-bold">Hasil Prediksi: {{ prediction }}</h4>
+                <p class="mb-2">Tingkat Keyakinan Model (Probabilitas Daun): <strong>{{ probability }}%</strong></p>
+                <hr>
+                <h6 class="fw-bold">Penjelasan Alur Keputusan (White-Box Rule):</h6>
+                <ul class="mb-0">
+                    {% for step in decision_path %}
+                    <li>{{ step }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+function fillBenignSample() {
+    document.querySelector('[name="mean_radius"]').value = 11.42;
+    document.querySelector('[name="mean_texture"]').value = 14.96;
+    document.querySelector('[name="mean_perimeter"]').value = 73.13;
+    document.querySelector('[name="mean_area"]').value = 402.0;
+    document.querySelector('[name="mean_smoothness"]').value = 0.088;
+    document.querySelector('[name="mean_compactness"]').value = 0.075;
+    document.querySelector('[name="mean_concavity"]').value = 0.032;
+    document.querySelector('[name="mean_concave_points"]').value = 0.019;
+}
+function fillMalignantSample() {
+    document.querySelector('[name="mean_radius"]').value = 17.99;
+    document.querySelector('[name="mean_texture"]').value = 21.38;
+    document.querySelector('[name="mean_perimeter"]').value = 122.8;
+    document.querySelector('[name="mean_area"]').value = 1001.0;
+    document.querySelector('[name="mean_smoothness"]').value = 0.118;
+    document.querySelector('[name="mean_compactness"]').value = 0.277;
+    document.querySelector('[name="mean_concavity"]').value = 0.300;
+    document.querySelector('[name="mean_concave_points"]').value = 0.147;
+}
+</script>
+</body>
+</html>
